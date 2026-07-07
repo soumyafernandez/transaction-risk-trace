@@ -1,103 +1,130 @@
-Transaction Risk Trace
+# 🚨 Transaction Risk Trace
 
-A rule-based Anti-Money Laundering (AML) transaction monitoring simulator built using HTML, CSS, and JavaScript.
+> **A rule-based Anti-Money Laundering (AML) transaction monitoring simulator built using HTML, CSS, and JavaScript.**
 
-Transaction Risk Trace demonstrates how financial institutions can evaluate transactions using deterministic compliance rules and generate an explainable audit trail for every risk decision.
+Transaction Risk Trace demonstrates how financial institutions evaluate transactions using deterministic compliance rules and generate an explainable audit trail for every risk decision.
 
-This project is built for learning and portfolio purposes using synthetic transaction data.
+This project is built for learning and portfolio purposes using **synthetic transaction data**.
 
-Preview
+---
+
+# 📸 Preview
 
 ![Dashboard](screenshots/dashboard.png)
 
-Live Demo
+---
 
-🚀 Live Demo
-https://soumyafernandez.github.io/transaction-risk-trace/
+# 🌐 Live Demo
 
-Features
+🔗 **Live Demo:** https://soumyafernandez.github.io/transaction-risk-trace/
 
-✅ Rule-based AML Monitoring
+---
 
-✅ Real-time Risk Scoring
+# ✨ Features
 
-✅ Explainable Rule Trace
+- ✅ Rule-based AML Monitoring
+- ✅ Real-time Risk Scoring
+- ✅ Explainable Rule Trace
+- ✅ Interactive Transaction Ledger
+- ✅ Sample Transaction Generator
+- ✅ Synthetic AML Dataset
 
-✅ Interactive Transaction Ledger
+---
 
-✅ Sample Transaction Generator
+# 🛡️ AML Rules Implemented
 
-✅ Synthetic AML Dataset
+| Rule | Description |
+|------|-------------|
+| Structuring Detection | Flags transactions just below the \$10,000 reporting threshold |
+| Sanction Screening | Detects sanctioned jurisdictions |
+| High-Risk Jurisdiction | Flags countries with elevated AML risk |
+| PEP Detection | Identifies Politically Exposed Persons |
+| Velocity Monitoring | Detects excessive customer transaction frequency |
+| Large Value Transfer | Flags transfers above \$50,000 |
 
-AML Rules Implemented
+---
 
-| Rule                   | Description                                                   |
-| ---------------------- | ------------------------------------------------------------- |
-| Structuring Detection  | Flags transactions just below the $10,000 reporting threshold |
-| Sanction Screening     | Detects transactions involving sanctioned jurisdictions       |
-| High-Risk Jurisdiction | Flags countries with elevated AML risk                        |
-| PEP Detection          | Identifies Politically Exposed Persons                        |
-| Velocity Monitoring    | Detects excessive customer transaction frequency              |
-| Large Value Transfer   | Flags transactions above $50,000                              |
+# 📊 Risk Levels
 
-Risk Levels
-
-| Score | Level  |
-| ----- | ------ |
-| 8     | Low    |
-| 42    | Medium |
-| 83–97 | High   |
+| Score | Risk |
+|------:|------|
+| 8 | 🟢 Low |
+| 42 | 🟡 Medium |
+| 83–97 | 🔴 High |
 
 The simulator evaluates multiple compliance rules simultaneously and combines them into a transparent risk score.
 
-Screenshots
+---
 
-Dashboard
+# 🖼️ Screenshots
+
+## Dashboard
+
 ![Dashboard](screenshots/dashboard.png)
 
-Rule Trace
+---
+
+## Rule Trace
+
 ![Rule Trace](screenshots/rule-trace.png)
 
-Transaction Ledger
+---
+
+## Transaction Ledger
+
 ![Ledger](screenshots/ledger.png)
 
-Tech Stack
-HTML5
-CSS3
-Vanilla JavaScript
+---
 
-How It Works
-Enter transaction details.
-Run the AML rule engine.
-The simulator evaluates six compliance rules.
-A risk score is generated.
-Every triggered rule is displayed as an explainable audit trail.
+# ⚙️ Tech Stack
 
-Future Improvements
-Customer Profiles
-Historical Transaction Analysis
-Machine Learning Risk Prediction
-Case Management Dashboard
-SAR Report Generator
-Interactive Analytics Dashboard
-Export to CSV/PDF
-Search & Filter Transactions
-Responsive Mobile UI
+- HTML5
+- CSS3
+- JavaScript (Vanilla)
 
-Disclaimer
+---
 
-This application is for educational and portfolio purposes only.
+# 🚀 How It Works
 
-It is not intended for production compliance use and does not implement real-world regulatory frameworks or institutional AML controls.
+1. Enter transaction details.
+2. Run the AML Rule Engine.
+3. Evaluate six compliance rules.
+4. Generate a risk score.
+5. Display an explainable audit trail.
 
-All transaction data used in the simulator is synthetic.
+---
 
-Author
+# 🔮 Future Improvements
 
-Soumya Fernandez
+- Customer Profiles
+- Historical Transaction Analysis
+- Machine Learning Risk Prediction
+- Case Management Dashboard
+- SAR Report Generator
+- Interactive Analytics Dashboard
+- Export to CSV/PDF
+- Search & Filter Transactions
+- Responsive Mobile UI
 
-💼 Aspiring Data Analyst | Risk Analyst | RegTech Enthusiast
+---
 
-LinkedIn: (https://www.linkedin.com/in/soumya-fernandez/)
-GitHub: (https://github.com/soumyafernandez)
+# ⚠️ Disclaimer
 
+This application is **for educational and portfolio purposes only**.
+
+It is **not intended for production compliance use**.
+
+All transaction data used in this simulator is synthetic.
+
+---
+
+# 👨‍💻 Author
+
+**Soumya Fernandez**
+
+Aspiring Data Analyst | Risk Analyst | RegTech Enthusiast
+
+- GitHub: https://github.com/soumyafernandez
+- LinkedIn: *(Add your LinkedIn URL)*
+
+---
