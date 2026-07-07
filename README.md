@@ -125,6 +125,6 @@ All transaction data used in this simulator is synthetic.
 Aspiring Data Analyst | Risk Analyst | RegTech Enthusiast
 
 - GitHub: https://github.com/soumyafernandez
-- LinkedIn: *(Add your LinkedIn URL)*
+- LinkedIn: https://www.linkedin.com/in/soumya-fernandez/
 
 ---
