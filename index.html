@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Transaction Risk Trace</title>
+<style>
+  :root{
+    --bg: #0B1220;
+    --panel: #131B2C;
+    --panel-alt: #182238;
+    --line: #253048;
+    --text: #E8EAED;
+    --muted: #7C8AA5;
+    --safe: #2DD4BF;
+    --warn: #E8A33D;
+    --danger: #E5484D;
+    --mono: 'IBM Plex Mono', 'SFMono-Regular', Consolas, monospace;
+    --body: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin:0; background:var(--bg); color:var(--text);
+    font-family:var(--body); min-height:100vh;
+  }
+  @font-face { font-family:'Inter'; src:local('Inter'); }
+  .wrap{ max-width:1180px; margin:0 auto; padding:28px 20px 60px; }
+  header{ display:flex; align-items:baseline; justify-content:space-between; margin-bottom:22px; flex-wrap:wrap; gap:10px; }
+  .brand{ display:flex; align-items:baseline; gap:10px; }
+  .brand .mark{ font-family:var(--mono); font-size:12px; letter-spacing:.14em; color:var(--safe); border:1px solid var(--safe); padding:3px 7px; border-radius:3px; }
+  h1{ font-size:19px; margin:0; font-weight:600; letter-spacing:.01em; }
+  .sub{ color:var(--muted); font-size:12.5px; font-family:var(--mono); }
+  .grid{ display:grid; grid-template-columns: 300px 1fr 320px; gap:16px; }
+  @media (max-width:980px){ .grid{ grid-template-columns:1fr; } }
+  .panel{ background:var(--panel); border:1px solid var(--line); border-radius:8px; padding:16px; }
+  .eyebrow{ font-family:var(--mono); font-size:10.5px; letter-spacing:.14em; color:var(--muted); text-transform:uppercase; margin-bottom:12px; }
+  label{ display:block; font-size:11.5px; color:var(--muted); margin:12px 0 5px; font-family:var(--mono); text-transform:uppercase; letter-spacing:.06em; }
+  label:first-of-type{ margin-top:0; }
+  input, select{
+    width:100%; background:var(--panel-alt); border:1px solid var(--line); color:var(--text);
+    padding:9px 10px; border-radius:5px; font-size:13.5px; font-family:var(--body);
+  }
+  input:focus, select:focus{ outline:none; border-color:var(--safe); }
+  button{
+    width:100%; margin-top:16px; padding:11px; border-radius:6px; border:none;
+    font-family:var(--mono); font-size:12px; letter-spacing:.06em; text-transform:uppercase;
+    cursor:pointer; transition:opacity .15s;
+  }
+  button:hover{ opacity:.88; }
+  .btn-primary{ background:var(--safe); color:#06231F; font-weight:600; }
+  .btn-secondary{ background:transparent; color:var(--muted); border:1px solid var(--line); margin-top:8px; }
+  table{ width:100%; border-collapse:collapse; font-size:13px; }
+  th{ text-align:left; font-family:var(--mono); font-size:10.5px; color:var(--muted); text-transform:uppercase; letter-spacing:.07em; padding:8px 10px; border-bottom:1px solid var(--line); }
+  td{ padding:9px 10px; border-bottom:1px solid var(--line); }
+  tr.row{ cursor:pointer; }
+  tr.row:hover{ background:var(--panel-alt); }
+  tr.row.selected{ background:var(--panel-alt); }
+  .amt{ font-family:var(--mono); }
+  .badge{ display:inline-block; padding:3px 9px; border-radius:20px; font-size:11px; font-family:var(--mono); letter-spacing:.03em; font-weight:600; }
+  .badge.low{ background:rgba(45,212,191,.14); color:var(--safe); }
+  .badge.med{ background:rgba(232,163,61,.16); color:var(--warn); }
+  .badge.high{ background:rgba(229,72,77,.16); color:var(--danger); }
+  .empty{ color:var(--muted); font-size:12.5px; font-family:var(--mono); text-align:center; padding:30px 0; }
+  .trace-item{ display:flex; gap:9px; align-items:flex-start; padding:10px 0; border-bottom:1px solid var(--line); }
+  .trace-item:last-child{ border-bottom:none; }
+  .tick{ font-family:var(--mono); font-size:13px; width:16px; flex-shrink:0; margin-top:1px; }
+  .tick.fired{ color:var(--danger); }
+  .tick.clear{ color:var(--line); }
+  .trace-name{ font-size:12.5px; font-weight:600; }
+  .trace-name.fired{ color:var(--text); }
+  .trace-name.clear{ color:var(--muted); }
+  .trace-desc{ font-size:11.5px; color:var(--muted); margin-top:2px; line-height:1.4; }
+  .score-hero{ text-align:center; padding:14px 0 18px; border-bottom:1px solid var(--line); margin-bottom:14px; }
+  .score-num{ font-family:var(--mono); font-size:38px; font-weight:600; line-height:1; }
+  .score-label{ font-size:11px; color:var(--muted); font-family:var(--mono); text-transform:uppercase; letter-spacing:.1em; margin-top:6px; }
+  footer{ margin-top:22px; color:var(--muted); font-size:11.5px; font-family:var(--mono); text-align:center; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="brand">
+      <span class="mark">● LIVE</span>
+      <div>
+        <h1>Transaction Risk Trace</h1>
+        <div class="sub">rule-based AML monitoring simulator — synthetic data only</div>
+      </div>
+    </div>
+    <div class="sub" id="stats">0 transactions · 0 flagged</div>
+  </header>
+
+  <div class="grid">
+    <!-- INPUT PANEL -->
+    <div class="panel">
+      <div class="eyebrow">New Transaction</div>
+      <label>Amount (USD)</label>
+      <input type="number" id="amount" placeholder="e.g. 9800" value="9800">
+
+      <label>Destination Country</label>
+      <select id="country">
+        <option value="US">United States</option>
+        <option value="GB">United Kingdom</option>
+        <option value="DE">Germany</option>
+        <option value="AE">United Arab Emirates</option>
+        <option value="KY">Cayman Islands</option>
+        <option value="IR">Iran</option>
+        <option value="KP">North Korea</option>
+      </select>
+
+      <label>Customer Risk Tier</label>
+      <select id="tier">
+        <option value="standard">Standard</option>
+        <option value="elevated">Elevated</option>
+        <option value="pep">Politically Exposed (PEP)</option>
+      </select>
+
+      <label>Txns by this customer, last 24h</label>
+      <input type="number" id="freq" value="1">
+
+      <button class="btn-primary" onclick="submitTxn()">Run Rule Engine →</button>
+      <button class="btn-secondary" onclick="loadBatch()">Load sample batch (12)</button>
+      <button class="btn-secondary" onclick="reset()">Clear ledger</button>
+    </div>
+
+    <!-- LEDGER -->
+    <div class="panel">
+      <div class="eyebrow">Ledger</div>
+      <table>
+        <thead><tr><th>ID</th><th>Amount</th><th>Dest</th><th>Tier</th><th>Risk</th></tr></thead>
+        <tbody id="ledger"></tbody>
+      </table>
+      <div class="empty" id="emptyMsg">No transactions yet — submit one or load the sample batch.</div>
+    </div>
+
+    <!-- TRACE -->
+    <div class="panel">
+      <div class="eyebrow">Rule Trace</div>
+      <div id="traceHost">
+        <div class="empty">Select a transaction to see which rules fired.</div>
+      </div>
+    </div>
+  </div>
+
+  <footer>Rules: structuring · high-risk jurisdiction · velocity spike · PEP exposure · sanctioned country · large-value threshold — for portfolio demonstration, not production compliance use.</footer>
+</div>
+
+<script>
+const HIGH_RISK = ['AE','KY'];
+const SANCTIONED = ['IR','KP'];
+const COUNTRY_NAMES = {US:'United States',GB:'United Kingdom',DE:'Germany',AE:'UAE',KY:'Cayman Islands',IR:'Iran',KP:'North Korea'};
+
+let txns = [];
+let idCounter = 1;
+let selectedId = null;
+
+function evaluateRules(t){
+  const rules = [];
+
+  rules.push({
+    name: 'Structuring pattern',
+    desc: 'Amount sits just under the $10,000 CTR reporting threshold.',
+    fired: t.amount >= 9000 && t.amount < 10000
+  });
+
+  rules.push({
+    name: 'Sanctioned jurisdiction',
+    desc: 'Destination country is subject to comprehensive sanctions.',
+    fired: SANCTIONED.includes(t.country)
+  });
+
+  rules.push({
+    name: 'High-risk jurisdiction',
+    desc: 'Destination flagged for weak AML controls or high secrecy score.',
+    fired: HIGH_RISK.includes(t.country)
+  });
+
+  rules.push({
+    name: 'PEP exposure',
+    desc: 'Customer is classified as a Politically Exposed Person.',
+    fired: t.tier === 'pep'
+  });
+
+  rules.push({
+    name: 'Velocity spike',
+    desc: 'More than 3 transactions from this customer within 24 hours.',
+    fired: t.freq > 3
+  });
+
+  rules.push({
+    name: 'Large-value transfer',
+    desc: 'Single transaction exceeds $50,000.',
+    fired: t.amount > 50000
+  });
+
+  const firedCount = rules.filter(r => r.fired).length;
+  let score, level;
+  if (firedCount === 0) { score = 8; level = 'low'; }
+  else if (firedCount === 1) { score = 42; level = 'med'; }
+  else { score = Math.min(97, 55 + firedCount * 14); level = 'high'; }
+
+  return { rules, score, level };
+}
+
+function render(){
+  const tbody = document.getElementById('ledger');
+  const empty = document.getElementById('emptyMsg');
+  tbody.innerHTML = '';
+  empty.style.display = txns.length ? 'none' : 'block';
+
+  txns.slice().reverse().forEach(t => {
+    const tr = document.createElement('tr');
+    tr.className = 'row' + (t.id === selectedId ? ' selected' : '');
+    tr.onclick = () => { selectedId = t.id; render(); };
+    tr.innerHTML = `
+      <td class="amt">#${String(t.id).padStart(4,'0')}</td>
+      <td class="amt">$${t.amount.toLocaleString()}</td>
+      <td>${COUNTRY_NAMES[t.country]}</td>
+      <td>${t.tier}</td>
+      <td><span class="badge ${t.level}">${t.level === 'low' ? 'LOW' : t.level === 'med' ? 'MEDIUM' : 'HIGH'} · ${t.score}</span></td>
+    `;
+    tbody.appendChild(tr);
+  });
+
+  const flagged = txns.filter(t => t.level !== 'low').length;
+  document.getElementById('stats').textContent = `${txns.length} transactions · ${flagged} flagged`;
+
+  renderTrace();
+}
+
+function renderTrace(){
+  const host = document.getElementById('traceHost');
+  const t = txns.find(x => x.id === selectedId);
+  if (!t){
+    host.innerHTML = '<div class="empty">Select a transaction to see which rules fired.</div>';
+    return;
+  }
+  let html = `
+    <div class="score-hero">
+      <div class="score-num" style="color:${t.level==='high'?'var(--danger)':t.level==='med'?'var(--warn)':'var(--safe)'}">${t.score}</div>
+      <div class="score-label">Risk Score · #${String(t.id).padStart(4,'0')}</div>
+    </div>
+  `;
+  t.rules.forEach(r => {
+    html += `
+      <div class="trace-item">
+        <span class="tick ${r.fired ? 'fired' : 'clear'}">${r.fired ? '✕' : '✓'}</span>
+        <div>
+          <div class="trace-name ${r.fired ? 'fired' : 'clear'}">${r.name}</div>
+          <div class="trace-desc">${r.desc}</div>
+        </div>
+      </div>
+    `;
+  });
+  host.innerHTML = html;
+}
+
+function submitTxn(){
+  const amount = parseFloat(document.getElementById('amount').value) || 0;
+  const country = document.getElementById('country').value;
+  const tier = document.getElementById('tier').value;
+  const freq = parseInt(document.getElementById('freq').value) || 1;
+
+  const base = { id: idCounter++, amount, country, tier, freq };
+  const { rules, score, level } = evaluateRules(base);
+  const t = { ...base, rules, score, level };
+  txns.push(t);
+  selectedId = t.id;
+  render();
+}
+
+function loadBatch(){
+  const samples = [
+    {amount:1200, country:'US', tier:'standard', freq:1},
+    {amount:9700, country:'US', tier:'standard', freq:1},
+    {amount:15000, country:'GB', tier:'standard', freq:1},
+    {amount:8600, country:'KY', tier:'standard', freq:1},
+    {amount:2200, country:'DE', tier:'pep', freq:2},
+    {amount:75000, country:'AE', tier:'elevated', freq:1},
+    {amount:500, country:'US', tier:'standard', freq:5},
+    {amount:9900, country:'AE', tier:'pep', freq:4},
+    {amount:3000, country:'IR', tier:'standard', freq:1},
+    {amount:600, country:'GB', tier:'standard', freq:1},
+    {amount:9200, country:'KY', tier:'elevated', freq:2},
+    {amount:120000, country:'KP', tier:'pep', freq:6},
+  ];
+  samples.forEach(s => {
+    const base = { id: idCounter++, ...s };
+    const { rules, score, level } = evaluateRules(base);
+    txns.push({ ...base, rules, score, level });
+  });
+  selectedId = txns[txns.length-1].id;
+  render();
+}
+
+function reset(){
+  txns = [];
+  idCounter = 1;
+  selectedId = null;
+  render();
+}
+
+render();
+</script>
+</body>
+</html>
